@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/site.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="scripts/script.js"></script>
+</head>
+<body>
+	<div class=" p-4 row">
+		<div class=" text-center mt-3 mb-3 row">
+			<div class="col-2">
+				<img src="logo.png" width="300px" />
+			</div>
+			<div class="col-8 mt-5 mb-5">
+				<h1>LLM - Passage Generator</h1>
+			</div>
+			<div class="col-2"></div>
+		</div>
+	</div>
+	<div class="container-fluid mt-5">
+		<div class="row">
+			<div class="col-2"></div>
+			<div class="col-8 text-center">
+				<h5>Fine-tuned OpenAI model for 12th and 8th-grade passages with specific FKRA and chunk size targets, ensuring clarity and coherence.</h4>
+			</div>
+			<div class="col-2"></div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col-2"></div>
+			<div class="col-8 text-center">
+				<span>I want to generate passages based on the following  
+					<select class="form-select form-select-sm" id="Type" style="width:150px;display:inline-block">
+						<option value="Topic">Topic</option>
+						<option value="Passage">Passage</option>
+					</select>.
+				</span>
+			</div>
+			<div class="col-2"></div>
+		</div>
+		<br>
+		<br>
+		<div class="row" id="TopicDiv">
+			<div class="col"></div>
+			<div class="col">
+				<div class="mb-3 row">
+					<div class="col-lg-2">
+					  <label class="col-form-label">Topic</label>
+					</div>
+					<div class="col-lg-7">
+					  <input class="form-control" type="text" id="topic"/>
+					</div>
+					<div class="col-lg-3">
+						<button class="btn btn-primary w-100" onclick="begin();">Submit</button>
+					</div>
+				</div>
+			</div>
+			<div class="col"></div>
+		</div>
+		<div class="row" id="PassageDiv" style="display:none">
+			<div class="col"></div>
+			<div class="col">
+				<div class="mb-3 row">
+					<div class="col-lg-2">
+					  <label class="col-form-label">Passage</label>
+					</div>
+					<div class="col-lg-7">
+					  <textarea class="form-control" id="passage" rows="5"></textarea>
+					</div>
+					<div class="col-lg-3">
+						<button class="btn btn-primary w-100" onclick="begin();">Submit</button>
+					</div>
+				</div>
+			</div>
+			<div class="col"></div>
+		</div>
+		<br>		
+		<br>
+		<br>
+		<div class="row">
+			<div class="col-2"></div>
+			<div class="col-8">
+				<p class="text-center" id="LoadingLabel"></p>
+				</div>
+			<div class="col-2"></div>
+		</div>
+		<div class="row">
+			<div class="col-2"></div>
+			<div class="col-8">
+				<div class="col-xs-12 col-sm-12 progress-container">		
+					<div class="progress progress-striped active">
+						<div class="progress-bar progress-bar-success" style="width:0%"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-2"></div>
+		</div>
+		<br>
+		<br>
+		<div class="row">
+			<div class="col-2"></div>
+			<div class="col-8 row" id="results">
+			  <div class="col-12 row">
+				<div class="row list-group-flush list-group-horizontal" id="list-tab" role="tablist">
+					<div class="col row">
+						<a class="list-group-item list-group-item-action active" id="list-passages-list" data-bs-toggle="list" href="#list-passages" role="tab" aria-controls="home">Passages</a>
+				  </div>
+				  <div class="col row">
+						<a class="list-group-item list-group-item-action" id="list-summary-list" data-bs-toggle="list" href="#list-summary" role="tab" aria-controls="summary">Summary</a>
+				  </div>
+				</div>
+				
+				<div class="tab-content" id="nav-tabContent" >
+					<br>
+				  <div class="tab-pane fade show active" id="list-passages" role="tabpanel" aria-labelledby="list-passages-list">
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Grade Level</div>
+						<div class="col list-group-item text-center">8th</div>
+						<div class="col list-group-item text-center">12th</div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Passage</div>
+						<div class="col list-group-item" id="passage1_8"></div>
+						<div class="col list-group-item" id="passage1_12"></div>
+					</div>				
+				  </div>
+				  <div class="tab-pane fade" id="list-summary" role="tabpanel" aria-labelledby="list-summary-list"> 
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Grade Level</div>
+						<div class="col list-group-item text-center">8th</div>
+						<div class="col list-group-item text-center">12th</div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">FKA Score</div>
+						<div class="col list-group-item" id="fka_score_8"></div>
+						<div class="col list-group-item" id="fka_score_12"></div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Sentences</div>
+						<div class="col list-group-item" id="sentences_8"></div>
+						<div class="col list-group-item" id="sentences_12"></div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Words</div>
+						<div class="col list-group-item" id="words_8"></div>
+						<div class="col list-group-item" id="words_12"></div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">Syllables</div>
+						<div class="col list-group-item" id="syllables_8"></div>
+						<div class="col list-group-item" id="syllables_12"></div>
+					</div>
+					<div class="row col-12 list-group list-group-horizontal">
+						<div class="col-3 list-group-item text-end">API Calls</div>
+						<div class="col list-group-item" id="api_calls_8"></div>
+						<div class="col list-group-item" id="api_calls_12"></div>
+					</div>
+				</div>
+			  </div>
+			</div>					
+		</div>
+		<div class="col-2"></div>
+	</div>
+    
+</body>
+
+</html>
