@@ -295,7 +295,7 @@ async function generate_passages(topic, grade, keywords="") {
 		
 	}
 	else{
-		prompt = "Topic: " + topic + "\n Keywords: " + keywords + "\n Generate a cohesive passage that consists of four distinct parts, each containing approximately 75 words. Avoid redundancy, and ensure that each part can stand alone as a coherent segment. Additionally, incorporate one little-known fact or idea in each part, which will be beneficial for later comprehension questions to test the reader's understanding. The entire passage must adhere to an 8th-grade reading level, as determined by the Flesch-Kincaid Grade Level formula. \n\n###\n\n";
+		prompt = "Generate a cohesive passage that consists of four distinct parts, each containing approximately 75 words. Avoid redundancy, and ensure that each part can stand alone as a coherent segment. Additionally, incorporate one little-known fact or idea in each part, which will be beneficial for later comprehension questions to test the reader's understanding. The entire passage must adhere to an 8th-grade reading level, as determined by the Flesch-Kincaid Grade Level formula. Topic: " + topic + "\n Keywords: " + keywords + "\n  \n\n###\n\n";
 		response = await fetch('https://api.openai.com/v1/completions', {
 			method: 'POST',
 			body: JSON.stringify({
