@@ -278,7 +278,7 @@ async function generate_passages(topic, grade, keywords="") {
 		text = myJson.choices[0].text;
 
 		for(var i = 1; i < 5; i++){
-			text = text.replace(i + ")","<br><br>");
+			text = text.replace(i + ")","<br>");
 		}
 				
 		number_words = text.split(' ').filter(function (el) {
@@ -321,7 +321,7 @@ async function generate_passages(topic, grade, keywords="") {
 		text = myJson.choices[0].text;
 
 		for(var i = 1; i < 5; i++){
-			text = text.replace(i + ")","<br><br>");
+			text = text.replace(i + ")","<br>");
 		}
 		
 		number_words = text.split(' ').filter(function (el) {
