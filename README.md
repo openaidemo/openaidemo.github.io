@@ -5,7 +5,7 @@ This project provides a fine-tuned OpenAI model for generating passages based on
 
 ### Website URL : https://openaidemo.github.io 
 
-<img width="1447" alt="image" src="https://github.com/openaidemo/openaidemo.github.io/assets/54473815/257691399-9f0db7b1-fa06-4616-8a6f-d82ae265a9de">
+<img width="1447" alt="image" src="https://user-images.githubusercontent.com/54473815/257691399-9f0db7b1-fa06-4616-8a6f-d82ae265a9de.png">
 
 ## How to Use
 
