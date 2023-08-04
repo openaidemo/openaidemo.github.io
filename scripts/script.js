@@ -1,4 +1,4 @@
-  $(function () {
+$(function () {
 	 
 	 
 	var $typeSelected = $('#Type');
@@ -32,9 +32,7 @@ var fkra_data_8 = {};
 var fkra_data_12 = {};
 var loading = false;
 
-var key1 = "sk-u3BBPzUvuKbWLVh5KofVT3Blbk";
-var key2 = "FJbuJfKqkTCB9QGa2Qhoun";
-
+var global_keywords = [];
 
 // update passage/results table
 function updatePage(grade, passage){
@@ -62,6 +60,7 @@ function updatePage(grade, passage){
 // clear values
 function reset()
 {
+	global_keywords = [];
 	api_calls_8 = 0;
 	api_calls_12 = 0;
 	
@@ -115,34 +114,23 @@ async function begin()
 	
 	if(type == "Topic"){
 
-		$("#LoadingLabel").html("Loading 12th Grade Passages...");
+		$("#LoadingLabel").html("Generating 12th Grade Passages...");
+
+		$(".progress-bar").animate({
+			width: "30%"
+		}, 100);
 		
 		// make call to get 12th grade level passages
+		
 		passage_set1 = await generate_passages(topic, 12);
 
 		updatePage(12, passage_set1);
 		
 		$("#LoadingLabel").html("12th Grade Passage Generation Complete!");
 		$("#results").toggle();
-		
-		$(".progress-bar").animate({
-			width: "30%"
-		}, 100);
-
-		$("#LoadingLabel").html("Extracting Keywords...");
-		
-		// extract keywords from text
-		keywords = extract(passage_set1,{
-				language:"english",
-				remove_digits: true,
-				return_changed_case:true,
-				remove_duplicates: false
-			});
-
-		keywords.push(topic);
-
-		$("#LoadingLabel").html("Keyword Generation Complete!");
-		
+					
+		global_keywords.push(topic);
+			
 		$(".progress-bar").animate({
 			width: "60%"
 		}, 100);
@@ -150,7 +138,8 @@ async function begin()
 		$("#LoadingLabel").html("Generating 8th Grade Passages...");
 		
 		// make call to get 8th grade level passages
-		passage_set2 = await generate_passages(topic,8, keywords.join(","));
+		
+		passage_set2 = await generate_passages(topic,8, global_keywords.join(","));
 		
 		updatePage(8, passage_set2);
 
@@ -169,7 +158,8 @@ async function begin()
 	}
 	else{	
 	
-	// grab key words from provided passage
+		// grab key words from provided passage
+		
 		$("#LoadingLabel").html("Extracting keywords from provided passage(s)...");
 		
 		keywords = extract(passage,{
@@ -183,13 +173,18 @@ async function begin()
 		
 		$(".progress-bar").animate({
 			width: "10%"
-		}, 500);
+		}, 100);
 
 		topic = keywords.join(",")
 
-		$("#LoadingLabel").html("Loading 12th Grade Passages...");
+		$("#LoadingLabel").html("Generating 12th Grade Passages...");
+
+		$(".progress-bar").animate({
+			width: "30%"
+		}, 100);
 		
 		// make call to get 12th grade level passages
+		
 		passage_set1 = await generate_passages(topic, 12);
 
 		updatePage(12, passage_set1);
@@ -197,33 +192,22 @@ async function begin()
 		$("#LoadingLabel").html("12th Grade Passage Generation Complete!");
 		$("#results").toggle();
 		
-		$(".progress-bar").animate({
-			width: "30%"
-		}, 100);
-
-		$("#LoadingLabel").html("Extracting keywords from 12th grade passages...");
-		
-		// extract keywords from text
-		keywords = extract(passage_set1,{
-				language:"english",
-				remove_digits: true,
-				return_changed_case:true,
-				remove_duplicates: false
-			});
-
-		$("#LoadingLabel").html("Keyword Extraction Complete!");
+			
+		global_keywords.push(topic);
 		
 		$(".progress-bar").animate({
 			width: "60%"
 		}, 100);
 
-
-		$("#LoadingLabel").html("Loading 8th Grade Passages...");
+		$("#LoadingLabel").html("Generating 8th Grade Passages...");
 		
 		// make call to get 8th grade level passages
-		passage_set2 = await generate_passages(topic, 8, keywords.join(","));
+		
+		passage_set2 = await generate_passages(topic, 8);
 		
 		updatePage(8, passage_set2);
+
+		$("#LoadingLabel").html("8th Grade Passage Generation Complete!");
 		
 		$(".progress-bar").animate({
 			width: "100%"
@@ -239,11 +223,10 @@ async function begin()
 	
 }
 
-async function generate_passages(topic, grade, keywords="") {
+async function generate_passages(topic, grade) {
 	var selected = $('#Type').val();
 	var prompt;
 	var response;
-	var keywords;
 	var myJson;
 	var text;
 	var number_words;
@@ -253,40 +236,35 @@ async function generate_passages(topic, grade, keywords="") {
 	if(grade == 12){
 		prompt = "Generate a cohesive passage with four parts and no redundancy. Each part should be approximately 75 words. Each part should be able to stand alone. In each part add one little known fact or idea that would be useful for later comprehension questions to test the reader. All text must be at " + grade + "th grade reading level, as measured by the Flesch-Kincaid Grade Level formula. The topic should be " + topic + " \n\n###\n\n";
 
-		response = await fetch('https://api.openai.com/v1/completions', {
+		response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com', {
 			method: 'POST',
 			body: JSON.stringify({
-				model: "davinci:ft-sawyer-laboratories:new-test-2023-06-23-15-15-58",
-				prompt: prompt,
-				temperature: 1,
-				max_tokens: 400,
-				top_p: 1.0,
-				frequency_penalty: 0.0,
-				presence_penalty: 0.0,
-				stop:["END"]
-
+				Jacopo:topic
 			}), 
 			headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + key1 + key2
-        }
+		            	'Content-Type': 'application/json',
+				'Accept':'*/*',
+				'Access-Control-Allow-Origin':'*'
+		        }
 		});
 		
 		api_calls_12 = api_calls_12 + 1;
 		
 		myJson = await response.json(); //extract JSON from the http response
-		text = myJson.choices[0].text;
-
-		for(var i = 1; i < 5; i++){
-			text = text.replace(i + ")","<br>");
-		}
+		text = myJson.response;
+		
+		//for(var i = 1; i < 5; i++){
+		//	text = text.replace(i + ")","<br><br>");
+		//}
 				
-		number_words = text.split(' ').filter(function (el) {
-			return el != "";
-		}).length;
+		//number_words = text.split(' ').filter(function (el) {
+		//	return el != "";
+		//}).length;
 		
 		
-		if(FKRA_calculator(text, grade) < 13 && FKRA_calculator(text, grade) > 11.5  && number_words > 260 && number_words < 340){
+		if(myJson.fkra_score < 13 && myJson.fkra_score > 11.5  && myJson.number_words > 260 && myJson.number_words < 340){
+			global_keywords = myJson.keywords;
+			fkra_data_12 = {sentences:myJson.number_sentences, words: myJson.number_words, syllables:myJson.number_syllables, score: myJson.fkra_score};
 			return text;
 		}
 		else{
@@ -295,52 +273,47 @@ async function generate_passages(topic, grade, keywords="") {
 		
 	}
 	else{
-		prompt = "Topic: " + topic + "\n Keywords: " + keywords + "\n Generate a cohesive passage that consists of four distinct parts, each containing approximately 75 words. Avoid redundancy, and ensure that each part can stand alone as a coherent segment. Additionally, incorporate one little-known fact or idea in each part, which will be beneficial for later comprehension questions to test the reader's understanding. The entire passage must adhere to an 8th-grade reading level, as determined by the Flesch-Kincaid Grade Level formula. \n\n###\n\n";
-		response = await fetch('https://api.openai.com/v1/completions', {
+		response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/8grade', {
 			method: 'POST',
 			body: JSON.stringify({
-				model: "davinci:ft-sawyer-laboratories:grade-8-fifth-attempt-2023-08-01-17-22-43",
-				prompt: prompt,
-				temperature: 1,
-				max_tokens: 400,
-				top_p: 1.0,
-				frequency_penalty: 0.0,
-				presence_penalty: 0.0,
-				stop:["END"]
+				Jacopo:topic,
+				Keywords: global_keywords.join(",")
 
 			}), // string or object
 			headers: {
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + key1 + key2
+				'Accept':'*/*',
+				'Access-Control-Allow-Origin':'*'
 			}
 		});
 		
 		api_calls_8 = api_calls_8 + 1;
 		
 		myJson = await response.json(); //extract JSON from the http response
-		text = myJson.choices[0].text;
+		text = myJson.response;
 
-		for(var i = 1; i < 5; i++){
-			text = text.replace(i + ")","<br><br>");
-		}
+		//for(var i = 1; i < 5; i++){
+		//	text = text.replace(i + ")","<br><br>");
+		//}
 		
-		number_words = text.split(' ').filter(function (el) {
-			return el != "";
-		}).length;
+		//number_words = text.split(' ').filter(function (el) {
+		//	return el != "";
+		//}).length;
 		
 		
-		if(FKRA_calculator(text, grade) < 9 && FKRA_calculator(text, grade) > 7.5  && number_words > 260 && number_words < 340){
+		if(myJson.fkra_score < 9 && myJson.fkra_score > 7.5  && myJson.number_words > 260 && myJson.number_words < 340){
+			fkra_data_8 = {sentences:myJson.number_sentences, words: myJson.number_words, syllables:myJson.number_syllables, score: myJson.fkra_score};
 			return text;
 		}
 		else{
-			return await generate_passages(topic, 8, keywords);
+			return await generate_passages(topic, 8);
 		}
 	}
 			
 }
 
 
-function word_count(word) {
+/*function word_count(word) {
 	word = word.toLowerCase();
 
 	if (word.length <= 2) { return 1; }                             //return 1 if word.length <= 2
@@ -362,7 +335,13 @@ function FKRA_calculator(passage, grade) {
 	var number_words = words.length
 	
 	// number of sentences
-	var sentences = passage.match(/[\w|\)][.?!](\s|$)/g);	
+	var sentences = passage.match(/[\w|\)][.?!](\s|$)/g);
+
+	if(sentences != null){
+		sentences = sentences.filter(function(value, index, arr){ 
+			return value.trim().length > 0;
+		    });
+	}
 	var number_sentences = sentences != null ? sentences.length : 0;
 	
 	// number of syllables
@@ -397,7 +376,8 @@ function FKRA_calculator(passage, grade) {
 	}
 	
 	return Math.round(fkra * 10) / 10
-}
+}*/
+
 
 // function to extract keywords  https://github.com/michaeldelorenzo/keyword-extractor TODO: utilize node-modules
 function extract(
