@@ -2,12 +2,22 @@ $(function () {
 	 
 	 
 	var $typeSelected = $('#Type');
+	var $gradeSelected = $('#Grade');
 	var $topicDiv = $('#TopicDiv');
 	var $passageDiv = $('#PassageDiv');
 	var $results = $("#results");
 	var $progressContainer = $(".progress-container");
+	var $wc_min = $('#wc_min');
+	var $wc_max = $('#wc_max');
+	var $wc_min_number = $('#wc_min_number');
+	var $wc_max_number = $('#wc_max_number');
+	var $fkra_min = $('#fkra_min');
+	var $fkra_max = $('#fkra_max');
+	var $fkra_min_number = $('#fkra_min_number');
+	var $fkra_max_number = $('#fkra_max_number');
 	
 	$results.hide();
+	
 	$progressContainer.hide();
 	
 	$typeSelected.change(function(){
@@ -22,47 +32,133 @@ $(function () {
 		}
 	 });
 	
+	
+	$fkra_min.on("input", function(){
+		$fkra_min_number.html($fkra_min.val());
+		
+	});
+	
+	
+	$fkra_max.on("input", function(){
+		$fkra_max_number.html($fkra_max.val());
+		
+	});
+	
+	$wc_max.on("input", function(){
+		$wc_max_number.html($wc_max.val());
+		
+	});
+	
+	$wc_min.on("input", function(){
+		$wc_min_number.html($wc_min.val());
+		
+	});
+	
+	$gradeSelected.change(function(){
+		
+		switch($gradeSelected.val()){
+			case "2":
+				break;
+			case "3":
+				break;
+			case "4":
+				break;
+			case "6":
+				$fkra_min.prop({
+					'min': 5.5,
+					'max': 6,
+					'value': 5.5
+				});
+				$fkra_max.prop({
+					'min': 6.1,
+					'max': 7,
+					'value': 7
+				});
+				
+				$fkra_min_number.html(6);
+				$fkra_max_number.html(7);
+				break;
+			case "8":
+				$fkra_min.prop({
+					'min': 7.5,
+					'max': 8,
+					'value': 7.5
+				});
+				$fkra_max.prop({
+					'min': 8.1,
+					'max': 9,
+					'value': 9
+				});
+				$fkra_min_number.html(7.5);
+				$fkra_max_number.html(9);
+				break;
+			case "12":
+				$fkra_min.prop({
+					'min': 11.5,
+					'max': 12,
+					'value': 11.5
+				});
+				$fkra_max.prop({
+					'min': 12.1,
+					'max': 13,
+					'value': 13
+				});
+				$fkra_min_number.html(11.5);
+				$fkra_max_number.html(13);
+				break;
+			default:
+			break;
+		}
+	});
+	// $( "#slider-range" ).slider({
+      // range: true,
+      // min: 0,
+      // max: 10,
+      // values: [ 1, 8 ],
+      // slide: function( event, ui ) {
+        // $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] );
+       // min =  ui.values[ 0 ];
+       // max = ui.values[ 1 ];
+       
+       // console.log(min)
+      // console.log(max)
+      // }
+    // });
  });
 
 // global variables
-var api_calls_8 = 0;
-var api_calls_12 = 0;
+var api_calls = 0;
 
-var fkra_data_8 = {};
-var fkra_data_12 = {};
+var fkra_data = {};
+
 var loading = false;
 
 var global_keywords = [];
 
+var fkra_min,fkra_max,wc_min, wc_max;
+
+
 // update passage/results table
 function updatePage(grade, passage){
 
-	if(grade == 8){
-		// set 8th grade data
-		$("#passage1_8").html(passage);
-		$("#fka_score_8").html(fkra_data_8.score);
-		$("#sentences_8").html(fkra_data_8.sentences);
-		$("#words_8").html(fkra_data_8.words);
-		$("#syllables_8").html(fkra_data_8.syllables);
-		$("#api_calls_8").html(api_calls_8);
-	}
-	else{
-		// set 12th grade data
-		$("#passage1_12").html(passage);
-		$("#fka_score_12").html(fkra_data_12.score);
-		$("#sentences_12").html(fkra_data_12.sentences);
-		$("#words_12").html(fkra_data_12.words);
-		$("#syllables_12").html(fkra_data_12.syllables);
-		$("#api_calls_12").html(api_calls_12);
-	}	
+
+		// set passage data
+		$("#passages_grade").html(grade + "th");
+		$("#summary_grade").html(grade + "th");
+		$("#passage1").html(passage);
+		$("#fka_score").html(fkra_data.score);
+		$("#sentences").html(fkra_data.sentences);
+		$("#words").html(fkra_data.words);
+		$("#syllables").html(fkra_data.syllables);
+		$("#api_calls").html(api_calls);
+		
 }
 
 // clear values
 function reset()
 {
 	global_keywords = [];
-	api_calls_8 = 0;
-	api_calls_12 = 0;
+	api_calls = 0;
 	
 	$(".progress-bar").animate({
 		width: "0%"
@@ -72,21 +168,16 @@ function reset()
 	$(".progress-container").show();
 	
 			
-	// set 8th grade data
-	$("#passage1_8").html("");
-	$("#fka_score_8").html("");
-	$("#sentences_8").html("");
-	$("#words_8").html("");
-	$("#syllables_8").html("");
-	$("#api_calls_8").html("");
+	// set grade data
 	
-	// set 12th grade data
-	$("#passage1_12").html("");
-	$("#fka_score_12").html("");
-	$("#sentences_12").html("");
-	$("#words_12").html("");
-	$("#syllables_12").html("");
-	$("#api_calls_12").html("");
+	$("#passage1").html("");
+	$("#fka_score").html("");
+	$("#sentences").html("");
+	$("#words").html("");
+	$("#syllables").html("");
+	$("#api_calls").html("");
+	
+	
 	
 	$("#LoadingLabel").html("");
 		
@@ -104,55 +195,67 @@ async function begin()
 	
 	loading = true;
 	
+	fkra_min = $('#fkra_min').val();
+	fkra_max = $('#fkra_max').val();
+	wc_min = $('#wc_min').val();
+	wc_max = $('#wc_max').val();
 	var type = $("#Type").val();
 	var topic = $("#topic").val();
 	var passage = $("#passage").val();
-	
+	var grade = $("#Grade").val();
 	var passage_set1;
 	var passage_set2;
 	var keywords;
 	
 	if(type == "Topic"){
 
-		$("#LoadingLabel").html("Generating 12th Grade Passages...");
+		$("#LoadingLabel").html("Generating " + grade + "th Grade Passages...");
 
 		$(".progress-bar").animate({
-			width: "30%"
-		}, 100);
+			width: "50%"
+		}, 500)
+		.promise().done(function () {
+			$(".progress-container").toggle();
+			$("#results").toggle();			
+			loading = false;
+		});;
 		
-		// make call to get 12th grade level passages
+		// make call to get 1 grade level passages
 		
-		passage_set1 = await generate_passages(topic, 12);
+		passage_set1 = await generate_passages(topic, grade);
 
-		updatePage(12, passage_set1);
-		
-		$("#LoadingLabel").html("12th Grade Passage Generation Complete!");
-		$("#results").toggle();
+		updatePage(grade, passage_set1);		
 					
-		global_keywords.push(topic);
+		//global_keywords.push(topic);
 			
-		$(".progress-bar").animate({
-			width: "60%"
-		}, 100);
-
-		$("#LoadingLabel").html("Generating 8th Grade Passages...");
-		
-		// make call to get 8th grade level passages
-		
-		passage_set2 = await generate_passages(topic,8, global_keywords.join(","));
-		
-		updatePage(8, passage_set2);
-
-		$("#LoadingLabel").html("8th Grade Passage Generation Complete!");
-		
 		$(".progress-bar").animate({
 			width: "100%"
 		}, 500)
 		.promise().done(function () {
-			
-			$(".progress-container").toggle();			
+			$("#LoadingLabel").html(grade + "th Grade Passage Generation Complete!");
+			$(".progress-container").toggle();
+			$("#results").toggle();			
 			loading = false;
-		})
+		});
+
+		//$("#LoadingLabel").html("Generating 8th Grade Passages...");
+		
+		// make call to get 8th grade level passages
+		
+		//passage_set2 = await generate_passages(topic,8, global_keywords.join(","));
+		
+		//updatePage(8, passage_set2);
+
+		//$("#LoadingLabel").html("8th Grade Passage Generation Complete!");
+		
+		//$(".progress-bar").animate({
+		//	width: "100%"
+		//}, 500)
+		//.promise().done(function () {
+			
+		//	$(".progress-container").toggle();			
+		//	loading = false;
+		//})
 		
 		
 	}
@@ -160,7 +263,7 @@ async function begin()
 	
 		// grab key words from provided passage
 		
-		$("#LoadingLabel").html("Extracting keywords from provided passage(s)...");
+		/*$("#LoadingLabel").html("Extracting keywords from provided passage(s)...");
 		
 		keywords = extract(passage,{
 				language:"english",
@@ -218,6 +321,8 @@ async function begin()
 			loading = false;
 		})
 		
+		*/
+		
 	}
 	
 	
@@ -225,90 +330,77 @@ async function begin()
 
 async function generate_passages(topic, grade) {
 	var selected = $('#Type').val();
+	
 	var prompt;
 	var response;
 	var myJson;
 	var text;
 	var number_words;
-	var fkra;
 	
 	
-	if(grade == 12){
-		prompt = "Generate a cohesive passage with four parts and no redundancy. Each part should be approximately 75 words. Each part should be able to stand alone. In each part add one little known fact or idea that would be useful for later comprehension questions to test the reader. All text must be at " + grade + "th grade reading level, as measured by the Flesch-Kincaid Grade Level formula. The topic should be " + topic + " \n\n###\n\n";
+	
+	switch(grade){
+		
+		case "2":
+			break;
+		case "3":
+			break;
+		case "4":
+			break;
+		case "6":
+			break;
+		case "8":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/8grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+			
+			//myJson = {response: 'this is the story about .........',number_sentences:800, number_words: parseInt(wc_min) + 0.1, number_syllables:1520, fkra_score: parseInt(fkra_min) + 0.1 };
+			
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			
+			
+			break;
+		case "12":
+			prompt = "Generate a cohesive passage with four parts and no redundancy. Each part should be approximately 75 words. Each part should be able to stand alone. In each part add one little known fact or idea that would be useful for later comprehension questions to test the reader. All text must be at " + grade + "th grade reading level, as measured by the Flesch-Kincaid Grade Level formula. The topic should be " + topic + " \n\n###\n\n";
 
-		response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com', {
-			method: 'POST',
-			body: JSON.stringify({
-				Jacopo:topic
-			}), 
-			headers: {
-		            	'Content-Type': 'application/json',
-				'Accept':'*/*',
-				'Access-Control-Allow-Origin':'*'
-		        }
-		});
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/?topic='+topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+					}
+			});
+			
+			//myJson = {response: 'this is the story about .........',number_sentences:800, number_words: parseInt(wc_min) + 0.1, number_syllables:1520, fkra_score: parseInt(fkra_min) + 0.1 };
+			api_calls = api_calls + 1;
 		
-		api_calls_12 = api_calls_12 + 1;
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			
+			
+			break;
+		default:
+			break;			
 		
-		myJson = await response.json(); //extract JSON from the http response
-		text = myJson.response;
-		
-		//for(var i = 1; i < 5; i++){
-		//	text = text.replace(i + ")","<br><br>");
-		//}
-				
-		//number_words = text.split(' ').filter(function (el) {
-		//	return el != "";
-		//}).length;
-		
-		
-		if(myJson.fkra_score < 13 && myJson.fkra_score > 11.5  && myJson.number_words > 260 && myJson.number_words < 340){
-			global_keywords = myJson.keywords;
-			fkra_data_12 = {sentences:myJson.number_sentences, words: myJson.number_words, syllables:myJson.number_syllables, score: myJson.fkra_score};
-			return text;
-		}
-		else{
-			return await generate_passages(topic, 12);
-		}
-		
+	}
+	
+	if(myJson.fkra_score > parseInt(fkra_min) && myJson.fkra_score < parseInt(fkra_max) && myJson.number_words > parseInt(wc_min) && myJson.number_words < parseInt(wc_max)){
+		fkra_data = {sentences:myJson.number_sentences, words: myJson.number_words, syllables:myJson.number_syllables, score: myJson.fkra_score};
+		return text;
 	}
 	else{
-		response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/8grade', {
-			method: 'POST',
-			body: JSON.stringify({
-				Jacopo:topic,
-				Keywords: global_keywords.join(",")
-
-			}), // string or object
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept':'*/*',
-				'Access-Control-Allow-Origin':'*'
-			}
-		});
-		
-		api_calls_8 = api_calls_8 + 1;
-		
-		myJson = await response.json(); //extract JSON from the http response
-		text = myJson.response;
-
-		//for(var i = 1; i < 5; i++){
-		//	text = text.replace(i + ")","<br><br>");
-		//}
-		
-		//number_words = text.split(' ').filter(function (el) {
-		//	return el != "";
-		//}).length;
-		
-		
-		if(myJson.fkra_score < 9 && myJson.fkra_score > 7.5  && myJson.number_words > 260 && myJson.number_words < 340){
-			fkra_data_8 = {sentences:myJson.number_sentences, words: myJson.number_words, syllables:myJson.number_syllables, score: myJson.fkra_score};
-			return text;
-		}
-		else{
-			return await generate_passages(topic, 8);
-		}
+		return await generate_passages(topic, grade);
 	}
+	
 			
 }
 
