@@ -216,8 +216,6 @@ async function begin()
 		}, 500)
 		.promise().done(function () {
 			$(".progress-container").toggle();
-			$("#results").toggle();			
-			loading = false;
 		});;
 		
 		// make call to get 1 grade level passages
