@@ -213,10 +213,7 @@ async function begin()
 
 		$(".progress-bar").animate({
 			width: "50%"
-		}, 500)
-		.promise().done(function () {
-			$(".progress-container").toggle();
-		});;
+		}, 500);
 		
 		// make call to get 1 grade level passages
 		
