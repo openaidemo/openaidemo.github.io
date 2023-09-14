@@ -71,12 +71,27 @@ $(function () {
 				});
 				$fkra_max.prop({
 					'min': 6.1,
-					'max': 7,
-					'value': 7
+					'max': 6.9,
+					'value': 6.9
 				});
 				
-				$fkra_min_number.html(6);
-				$fkra_max_number.html(7);
+				$fkra_min_number.html(5.5);
+				$fkra_max_number.html(6.9);
+				break;
+			case "7":
+				$fkra_min.prop({
+					'min': 6.5,
+					'max': 7,
+					'value': 6.5
+				});
+				$fkra_max.prop({
+					'min': 7.1,
+					'max': 7.9,
+					'value': 7.9
+				});
+				
+				$fkra_min_number.html(6.5);
+				$fkra_max_number.html(7.9);
 				break;
 			case "8":
 				$fkra_min.prop({
@@ -86,11 +101,53 @@ $(function () {
 				});
 				$fkra_max.prop({
 					'min': 8.1,
-					'max': 9,
-					'value': 9
+					'max': 8.9,
+					'value': 8.9
 				});
 				$fkra_min_number.html(7.5);
-				$fkra_max_number.html(9);
+				$fkra_max_number.html(8.9);
+				break;
+			case "9":
+				$fkra_min.prop({
+					'min': 8.5,
+					'max': 9,
+					'value': 8.5
+				});
+				$fkra_max.prop({
+					'min': 9.1,
+					'max': 9.9,
+					'value': 9.9
+				});
+				$fkra_min_number.html(8.5);
+				$fkra_max_number.html(9.9);
+				break;
+			case "10":
+				$fkra_min.prop({
+					'min': 9.5,
+					'max': 10,
+					'value': 9.5
+				});
+				$fkra_max.prop({
+					'min': 10.1,
+					'max': 10.9,
+					'value': 10.9
+				});
+				$fkra_min_number.html(9.5);
+				$fkra_max_number.html(10.9);
+				break;
+			case "11":
+				$fkra_min.prop({
+					'min': 10.5,
+					'max': 11,
+					'value': 10.5
+				});
+				$fkra_max.prop({
+					'min': 11.1,
+					'max': 11.9,
+					'value': 11.9
+				});
+				$fkra_min_number.html(10.5);
+				$fkra_max_number.html(11.9);
 				break;
 			case "12":
 				$fkra_min.prop({
@@ -100,11 +157,11 @@ $(function () {
 				});
 				$fkra_max.prop({
 					'min': 12.1,
-					'max': 13,
-					'value': 13
+					'max': 12.9,
+					'value': 12.9
 				});
 				$fkra_min_number.html(11.5);
-				$fkra_max_number.html(13);
+				$fkra_max_number.html(12.9);
 				break;
 			default:
 			break;
@@ -343,6 +400,34 @@ async function generate_passages(topic, grade) {
 		case "4":
 			break;
 		case "6":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/6grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+						
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			break;
+		case "7":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/7grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+						
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
 			break;
 		case "8":
 			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/8grade?topic=' + topic, {
@@ -353,9 +438,7 @@ async function generate_passages(topic, grade) {
 					'Access-Control-Allow-Origin':'*'
 				}
 			});
-			
-			//myJson = {response: 'this is the story about .........',number_sentences:800, number_words: parseInt(wc_min) + 0.1, number_syllables:1520, fkra_score: parseInt(fkra_min) + 0.1 };
-			
+						
 			api_calls = api_calls + 1;
 			
 			myJson = await response.json(); //extract JSON from the http response
@@ -363,9 +446,52 @@ async function generate_passages(topic, grade) {
 			
 			
 			break;
+		case "9":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/9grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+						
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			break;
+		case "10":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/10grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+						
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			break;
+		case "11":
+			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/11grade?topic=' + topic, {
+				method: 'GET',				
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept':'*/*',
+					'Access-Control-Allow-Origin':'*'
+				}
+			});
+						
+			api_calls = api_calls + 1;
+			
+			myJson = await response.json(); //extract JSON from the http response
+			text = myJson.response;
+			break;
 		case "12":
-			prompt = "Generate a cohesive passage with four parts and no redundancy. Each part should be approximately 75 words. Each part should be able to stand alone. In each part add one little known fact or idea that would be useful for later comprehension questions to test the reader. All text must be at " + grade + "th grade reading level, as measured by the Flesch-Kincaid Grade Level formula. The topic should be " + topic + " \n\n###\n\n";
-
 			response = await fetch('https://demo-adobe-de2576d8602d.herokuapp.com/?topic='+topic, {
 				method: 'GET',				
 				headers: {
@@ -375,7 +501,6 @@ async function generate_passages(topic, grade) {
 					}
 			});
 			
-			//myJson = {response: 'this is the story about .........',number_sentences:800, number_words: parseInt(wc_min) + 0.1, number_syllables:1520, fkra_score: parseInt(fkra_min) + 0.1 };
 			api_calls = api_calls + 1;
 		
 			myJson = await response.json(); //extract JSON from the http response
